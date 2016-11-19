@@ -33,10 +33,14 @@ pool.on('error', function(e, client) {
 pool.connect(function(err, client, release) {
     // TODO - you'll want to handle the error in real code
 
-    client.query('SELECT $1::text as name', ['foo'], function(err, result) {
+    client.query('SELECT name, overview, genre_ids FROM public.tv', function(err, result) {
         // you MUST return your client back to the pool when you're done!
         release();
-        console.log(result.rows[0].name); // output: foo
+        for (var i = 0; i<3; i++){
+            console.log(result.rows[i].name);
+            console.log(result.rows[i].overview);
+            console.log(result.rows[i].genre_ids);// attempt to output table values
+        }
     });
 });
 
