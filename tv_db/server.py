@@ -161,7 +161,7 @@ def translate_name_to_id():
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(host='0.0.0.0', debug=False)
     # ret1 = do_this([u'tt0795176'], 5.0)
     # ret2 = do_this([u'tt0903747'], 3.0)
     # ret = combine_scores([ret1, ret2])
