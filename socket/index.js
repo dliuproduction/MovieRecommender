@@ -6,7 +6,7 @@ var io = require('socket.io').listen(server);
 var port = process.env.PORT || 3000;
 var express = require('express');
 
-server.listen(port, function () {
+server.listen(port, '0.0.0.0', function () {
   console.log('Server listening at port %d', port);
 });
 
@@ -70,7 +70,7 @@ io.on('connection', function (socket) {
     // }
 
 
-    //  send the next quesion 
+    //  send the next quesion
     socket.emit("question",{
       username:socket.username,
       message:socket.question
