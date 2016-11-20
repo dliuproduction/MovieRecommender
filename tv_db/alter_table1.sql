@@ -1,0 +1,2 @@
+ALTER TABLE tv
+ALTER COLUMN imdbID TYPE varchar(9);
