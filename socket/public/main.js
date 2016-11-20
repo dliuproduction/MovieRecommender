@@ -33,7 +33,7 @@ $(function() {
   var lastName;
   var evenOdd = true;
   var movieRateDict = {}
-  var serverUrl = "https://codejam.localtunnel.me/"
+  var serverUrl = "http://159.203.30.223:5000/"
   var finishQuestionnaire = false;
   var socket = io();
 
