@@ -17,6 +17,12 @@ app.use(express.static(__dirname + '/public'));
 
 var numUsers = 0;
 
+
+
+
+
+
+
 io.on('connection', function (socket) {
   var addedUser = false;
 
