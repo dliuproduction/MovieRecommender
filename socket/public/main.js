@@ -17,7 +17,9 @@ $(function() {
   var $chatPage = $('.chat.page'); // The chatroom page
 
 
-  var recommandationTvShowsUrl = ["https://unsplash.it/200","https://unsplash.it/200","https://unsplash.it/200","https://unsplash.it/200","https://unsplash.it/200"]
+  var prefixUrl = "https://image.tmdb.org/t/p/w600_and_h900_bestv2"
+
+  var recommandationTvShowsUrl = [{"title":"this is the title","url":"https://unsplash.it/200","overview":"boring"},{"title":"2 title","url":"https://unsplash.it/200","overview":"boring"}]
 
   // Prompt for setting a username
   var username;
@@ -31,9 +33,14 @@ $(function() {
   var lastName;
   var evenOdd = true;
   var movieRateDict = {}
-  var serverUrl = "https://codejam.localtunnel.me/"
+  var serverUrl = "http://159.203.30.223:5000/"
   var finishQuestionnaire = false;
   var socket = io();
+
+  function converUrl(url){
+    return prefixUrl+url;
+  }
+
 
   function addParticipantsMessage (data) {
     console.log("addParticipantsMessage");
@@ -58,6 +65,18 @@ $(function() {
     }
   }
 
+  function addRecommandationHeader(){
+    var data = "This is our recommandation "
+    var $emptyLine = $("<hr>")
+    var $messageBodyDiv = $('<span class="messageBody">')
+      .text(data)
+      .append($emptyLine);
+    var $messageDiv = $('<li class="message"/>')
+      .append($messageBodyDiv);
+
+    addMessageElement($messageDiv, {});
+    console.log("addRecommendationheader");
+  }
   // Sends a chat message
   function sendMessage () {
     var message = $inputMessage.val();
@@ -174,8 +193,9 @@ $(function() {
     var imageClass = "imageClass"
     var overviewClass = "overView"
     var titleClass = "title"
-    var titleText = "this is the title"
-    var overViewText = "overview this is long stuff"
+    var titleText = e["title"]
+    var overViewText = e["overview"]
+    var imageUrl = e["url"]
     var $title = $("<h3>")
     .text(titleText)
     .addClass(titleClass)
@@ -185,9 +205,9 @@ $(function() {
     .addClass(overviewClass)
 
     var $emptyLine = $("<hr>")
-    var $img = e;
+    // var $img = e;
     var $imageDiv = $("<img />")
-      .attr("src",e)
+      .attr("src",imageUrl)
       .addClass(imageClass)
       
     var $messageBodyDiv = $('<span class="messageBody">')
@@ -294,6 +314,7 @@ $(function() {
           
           evenOdd = true;
           sendMessage();
+          addRecommandationHeader();
           // setInterval(function(){ console.log("wait") }, 3000);
           recommandationTvShowsUrl.map(function(el){
             addRecommendationUrl(el);
