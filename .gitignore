@@ -1,3 +1,5 @@
 socket.io/
 .DS_Store
 socket/node_modules
+browser-pcm-stream
+Cognitive-Speech-STT-JavaScript/

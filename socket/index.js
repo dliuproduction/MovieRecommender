@@ -1,18 +1,10 @@
 var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var server = require('http').createServer(app);
+// var http = require('http').Server(app);
+var server = require('http').Server(app);
+var io = require('socket.io').listen(server);
+
 var port = process.env.PORT || 3000;
 var express = require('express');
-
-//  get the url stuff
-// app.get('/', function(req, res){
-//   res.sendfile('index.html');
-// });
-
-
-
-
 
 server.listen(port, function () {
   console.log('Server listening at port %d', port);
@@ -37,8 +29,13 @@ io.on('connection', function (socket) {
     });
   });
 
+  socket.on('join', function (data) {
+    // we tell the client to execute 'new message'
+    console.log(data);
+  });
   // when the client emits 'add user', this listens and executes
   socket.on('add user', function (username) {
+    console.log("number user ",numUsers);
     if (addedUser) return;
 
     // we store the username in the socket session for this client
@@ -68,7 +65,9 @@ io.on('connection', function (socket) {
       username: socket.username
     });
   });
-
+  socket.on("ack",function(fn){
+    fn("this is the call back function");
+  })
   // when the user disconnects.. perform this
   socket.on('disconnect', function () {
     if (addedUser) {

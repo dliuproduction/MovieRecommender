@@ -24,10 +24,16 @@
   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script type="text/javascript">
-   var socket = io.connect('http://localhost:3000');
- socket.on('connect', function(data) {
-    socket.emit('join', 'Hello World from client');
- });
+ //   var socket = io.connect('http://localhost:3000');
+ // socket.on('connect', function(data) {
+ //    socket.emit('join', 'Hello nice from client');
+ // });
+
+ // var newSocket = io.connect('http://localhost:3000');
+ // newSocket.on('connect', function(data) {
+ //    newSocket.emit('join', 'Hello new from client');
+ // });
+
 </script>
 <script src="/main.js"></script>
 </body>

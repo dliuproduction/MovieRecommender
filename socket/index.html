@@ -1,4 +1,4 @@
-<!doctype html>
+<!-- <!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -22,7 +22,21 @@
   </ul>
 
   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="/socket.io/socket.io.js"></script>
-<script src="main.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.3.5.js"></script>
+  <script type="text/javascript">
+    var socket = io();
+  </script>
 </body>
-</html>
+</html> -->
+<body>
+  <p> helloworld</p>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+  var socket = io();  
+  socket.on('news', function (data) {
+    console.log(data);
+    socket.emit('my other event', { my: 'data' });
+  });
+</script>
+</body>
