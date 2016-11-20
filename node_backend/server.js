@@ -6,11 +6,10 @@ var Pool = require('pg').Pool;
 var copyTo = require('pg-copy-streams').to;
 var fs = require('fs');
 
-// by default the pool will use the same environment variables
-// as psql, pg_dump, pg_restore etc:
-// https://www.postgresql.org/docs/9.5/static/libpq-envars.html
-
-// you can optionally supply other values
+/**
+ * CONFIG for accessing the database
+ * @type {{host: string, user: string, password: string, database: string, max: number}}
+ */
 var config = {
     host: '159.203.30.223',
     user: 'postgres',
@@ -19,8 +18,7 @@ var config = {
     max: 10, // max number of clients in pool
 };
 
-// create the pool somewhere globally so its lifetime
-// lasts for as long as your app is running
+// create a pool of clients
 var pool = new Pool(config)
 
 pool.on('error', function(e, client) {
@@ -31,15 +29,14 @@ pool.on('error', function(e, client) {
 
 //check out a client for multiple operations, releasing it when done.
 pool.connect(function(err, client, release) {
-    // TODO - you'll want to handle the error in real code
 
     client.query('SELECT name, overview, genre_ids FROM public.tv', function(err, result) {
         // you MUST return your client back to the pool when you're done!
         release();
         for (var i = 0; i<3; i++){
-            console.log(result.rows[i].name);
+            console.log("\n" + result.rows[i].name);
             console.log(result.rows[i].overview);
-            console.log(result.rows[i].genre_ids);// attempt to output table values
+            console.log(result.rows[i].genre_ids + "\n");// attempt to output table values
         }
     });
 });
