@@ -23,16 +23,18 @@ $(function() {
   var lastTypingTime;
   var $currentInput = $usernameInput.focus();
 
+  var finishQuestionnaire = false;
   var socket = io();
 
   function addParticipantsMessage (data) {
-    var message = '';
-    if (data.numUsers === 1) {
-      message += "there's 1 participant";
-    } else {
-      message += "there are " + data.numUsers + " participants";
-    }
-    log(message);
+    // var message = '';
+    // if (data.numUsers === 1) {
+    //   message += "there's 1 participant";
+    // } else {
+    //   message += "there are " + data.numUsers + " participants";
+    // }
+    // log(message);
+    console.log("addParticipantsMessage");
   }
 
   // Sets the client's username
@@ -81,12 +83,12 @@ $(function() {
   // Adds the visual chat message to the message list
   function addChatMessage (data, options) {
     // Don't fade the message in if there is an 'X was typing'
-    var $typingMessages = getTypingMessages(data);
+    // var $typingMessages = getTypingMessages(data);
     options = options || {};
-    if ($typingMessages.length !== 0) {
-      options.fade = false;
-      $typingMessages.remove();
-    }
+    // if ($typingMessages.length !== 0) {
+    //   options.fade = false;
+    //   $typingMessages.remove();
+    // }
 
     var $usernameDiv = $('<span class="username"/>')
       .text(data.username)
@@ -114,12 +116,24 @@ $(function() {
 
   // Removes the visual chat typing message
   function removeChatTyping (data) {
-    getTypingMessages(data).fadeOut(function () {
-      $(this).remove();
-    });
+    // getTypingMessages(data).fadeOut(function () {
+    //   $(this).remove();
+    // });
     console.log("removeChatTyping")
   }
 
+
+  function addRecommendation(data){
+    var typingClass = data.typing ? 'typing' : '';
+    var $messageBodyDiv = $('<span class="messageBody">')
+      .text(data);
+    var $messageDiv = $('<li class="message"/>')
+      .addClass(typingClass)
+      .append($messageBodyDiv);
+
+    addMessageElement($messageDiv, {});
+    console.log("addRecommendation");
+  }
   // Adds a message element to the messages and scrolls to the bottom
   // el - The element to add as a message
   // options.fade - If the element should fade-in (default = true)
@@ -153,38 +167,39 @@ $(function() {
 
   // Prevents input from having injected markup
   function cleanInput (input) {
-    return $('<div/>').text(input).text();
+    return input;
+    // return $('<div/>').text(input).text();
     console.log("cleanInput");
   }
 
   // Updates the typing event
-  function updateTyping () {
-    if (connected) {
-      if (!typing) {
-        typing = true;
-        socket.emit('typing');
-      }
-      lastTypingTime = (new Date()).getTime();
+  // function updateTyping () {
+  //   if (connected) {
+  //     if (!typing) {
+  //       typing = true;
+  //       socket.emit('typing');
+  //     }
+  //     lastTypingTime = (new Date()).getTime();
 
-      setTimeout(function () {
-        var typingTimer = (new Date()).getTime();
-        var timeDiff = typingTimer - lastTypingTime;
-        if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
-          socket.emit('stop typing');
-          typing = false;
-        }
-      }, TYPING_TIMER_LENGTH);
-    }
-    console.log("updateTyping")
-  }
+  //     setTimeout(function () {
+  //       var typingTimer = (new Date()).getTime();
+  //       var timeDiff = typingTimer - lastTypingTime;
+  //       if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
+  //         socket.emit('stop typing');
+  //         typing = false;
+  //       }
+  //     }, TYPING_TIMER_LENGTH);
+  //   }
+  //   console.log("updateTyping")
+  // }
 
   // Gets the 'X is typing' messages of a user
-  function getTypingMessages (data) {
-    return $('.typing.message').filter(function (i) {
-      return $(this).data('username') === data.username;
-    });
-    console.log("getTypingMessages")
-  }
+  // function getTypingMessages (data) {
+  //   return $('.typing.message').filter(function (i) {
+  //     return $(this).data('username') === data.username;
+  //   });
+  //   console.log("getTypingMessages")
+  // }
 
   // Gets the color of a username through our hash function
   function getUsernameColor (username) {
@@ -207,9 +222,13 @@ $(function() {
     }
     // When the client hits ENTER on their keyboard
     if (event.which === 13) {
+      if (finishQuestionnaire){
+        $inputMessage.val('');
+        return;
+      }
       if (username) {
         sendMessage();
-        socket.emit('stop typing');
+        // socket.emit('stop typing');
         typing = false;
       } else {
         setUsername();
@@ -217,9 +236,9 @@ $(function() {
     }
   });
 
-  $inputMessage.on('input', function() {
-    updateTyping();
-  });
+  // $inputMessage.on('input', function() {
+  //   updateTyping();
+  // });
 
   // Click events
 
@@ -239,18 +258,37 @@ $(function() {
   socket.on('login', function (data) {
     connected = true;
     // Display the welcome message
-    var message = "Welcome to Socket.IO Chat – ";
+    var message = "Welcome to TV show recommandation System – ";
     log(message, {
       prepend: true
     });
     addParticipantsMessage(data);
   });
 
+  socket.on("finish Questionnaire",function(data){
+    finishQuestionnaire = true;
+  
+    addChatMessage(data);
+  })
   // Whenever the server emits 'new message', update the chat body
   socket.on('new message', function (data) {
     addChatMessage(data);
   });
 
+  // log the question out 
+  socket.on('question', function (data) {
+    // log(data.question + ' joined');
+    addChatMessage(data);
+  });
+
+
+  // output recommandation
+  socket.on("recommandation",function(data){
+    data.map(function(e){
+      console.log("element",e);
+      addRecommendation(e);
+    });
+  })
   // Whenever the server emits 'user joined', log it in the chat body
   socket.on('user joined', function (data) {
     log(data.username + ' joined');
@@ -261,18 +299,18 @@ $(function() {
   socket.on('user left', function (data) {
     log(data.username + ' left');
     addParticipantsMessage(data);
-    removeChatTyping(data);
+    // removeChatTyping(data);
   });
 
   // Whenever the server emits 'typing', show the typing message
-  socket.on('typing', function (data) {
-    addChatTyping(data);
-  });
+  // socket.on('typing', function (data) {
+  //   addChatTyping(data);
+  // });
 
   // Whenever the server emits 'stop typing', kill the typing message
-  socket.on('stop typing', function (data) {
-    removeChatTyping(data);
-  });
+  // socket.on('stop typing', function (data) {
+  //   removeChatTyping(data);
+  // });
 
   // socket.on('disconnect', function () {
   //   log('you have been disconnected');
@@ -280,15 +318,15 @@ $(function() {
 
   
 
-  socket.on('reconnect', function () {
-    log('you have been reconnected');
-    if (username) {
-      socket.emit('add user', username);
-    }
-  });
+  // socket.on('reconnect', function () {
+  //   log('you have been reconnected');
+  //   if (username) {
+  //     socket.emit('add user', username);
+  //   }
+  // });
 
-  socket.on('reconnect_error', function () {
-    log('attempt to reconnect has failed');
-  });
+  // socket.on('reconnect_error', function () {
+  //   log('attempt to reconnect has failed');
+  // });
 
 });
