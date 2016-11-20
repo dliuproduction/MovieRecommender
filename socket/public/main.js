@@ -17,6 +17,7 @@ $(function() {
   var $chatPage = $('.chat.page'); // The chatroom page
 
 
+  var recommandationTvShowsUrl = ["https://unsplash.it/200","https://unsplash.it/200","https://unsplash.it/200","https://unsplash.it/200","https://unsplash.it/200"]
 
   // Prompt for setting a username
   var username;
@@ -27,7 +28,10 @@ $(function() {
 
   // varible used for the app
   var lastQuestion;
-  var serverUrl = "https://codejam.localtunnel.me/name"
+  var lastName;
+  var evenOdd = true;
+  var movieRateDict = {}
+  var serverUrl = "https://codejam.localtunnel.me/"
   var finishQuestionnaire = false;
   var socket = io();
 
@@ -72,14 +76,32 @@ $(function() {
     console.log("sendMessage")
   }
 
+  
   function callAjax(lastAnswer,cb){
      console.log("sending",lastAnswer);
      $.ajax({
           type: "POST",
-          url: serverUrl,
+          url: serverUrl+"name",
           data: lastAnswer,
           success: function (data) {
-            console.log(data);
+            console.log("first ajax back",data);
+            lastName = data.id;
+            cb(data);
+          },
+          error:function(){
+            alert("Error");
+          },
+      });
+  }
+  function callSecondAjax(dict,cb){
+     console.log("sending second ajax call",dict);
+     $.ajax({
+          type: "POST",
+          url: serverUrl,
+          data: dict,
+          success: function (data) {
+            console.log("second ajax back",data);
+            // setName(data);
             cb(data);
           },
           error:function(){
@@ -150,7 +172,19 @@ $(function() {
   function addRecommendationUrl(e){
     // var typingClass = data.typing ? 'typing' : '';
     var imageClass = "imageClass"
+    var overviewClass = "overView"
+    var titleClass = "title"
+    var titleText = "this is the title"
+    var overViewText = "overview this is long stuff"
+    var $title = $("<h3>")
+    .text(titleText)
+    .addClass(titleClass)
 
+    var $overview = $("<div/>")
+    .text(overViewText)
+    .addClass(overviewClass)
+
+    var $emptyLine = $("<hr>")
     var $img = e;
     var $imageDiv = $("<img />")
       .attr("src",e)
@@ -158,11 +192,14 @@ $(function() {
       
     var $messageBodyDiv = $('<span class="messageBody">')
       // .text("something")
+      .append($title)
       .append($imageDiv)
+      .append($overview)
+      .append($emptyLine)
     var $messageDiv = $('<li class="message"/>')
       // .addClass(typingClass)
       
-      .css("display","inline")
+      // .css("display","inline")
       .append($messageBodyDiv);
 
 
@@ -230,14 +267,42 @@ $(function() {
     }
     // When the client hits ENTER on their keyboard
     if (event.which === 13) {
-      if (finishQuestionnaire){
-        $inputMessage.val('');
-        return;
-      }
+      // if (finishQuestionnaire){
+      //   $inputMessage.val('');
+      //   return;
+      // }
       if (username) {
-        sendMessage();
-        // socket.emit('stop typing');
-        typing = false;
+        
+        // for every anwser do ajax call
+        if (evenOdd){
+          var anwser = $inputMessage.val();
+          console.log("anwser is ",anwser);
+          callAjax(anwser,function(data){
+            addChatMessage(data);
+          });
+          evenOdd = false;
+          sendMessage();
+        }
+        else{
+          var rate = $inputMessage.val();
+          movieRateDict[lastName] = rate;
+          console.log("second answser is ",movieRateDict);
+          callSecondAjax(movieRateDict,function(data){
+            addChatMessage(data);
+          });
+          
+          
+          evenOdd = true;
+          sendMessage();
+          // setInterval(function(){ console.log("wait") }, 3000);
+          recommandationTvShowsUrl.map(function(el){
+            addRecommendationUrl(el);
+          })
+          
+          // socket.emit('stop typing');
+          typing = false;
+        }
+       
       } else {
         setUsername();
       }
@@ -274,7 +339,7 @@ $(function() {
   });
 
   socket.on("finish Questionnaire",function(data){
-    finishQuestionnaire = true;
+    // finishQuestionnaire = true;
     var lastAnswer = data.lastAnswer; 
     console.log("finish ... Questionnaire");
     // addChatMessage(lastAnswer);

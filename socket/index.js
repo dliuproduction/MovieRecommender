@@ -18,16 +18,33 @@ app.use(express.static(__dirname + '/public'));
 var numUsers = 0;
 
 
-var sampleQuestion =["what you like?",
-"what type of TV shows you like",
-"what is your faviourite TV shows language",
-"what is your faviourite TV shows"
+var sampleQuestion =[
+"Give me a TV show that you like",
+"How would you rate it",
+"Give me a TV show that you like",
+"How would you rate it",
+"Give me a TV show that you like",
+"How would you rate it",
+"Give me a TV show that you like",
+"How would you rate it",
+"Give me a TV show that you like",
+"How would you rate it",
+"Give me a TV show that you like",
+"How would you rate it",
+"Give me a TV show that you like",
+"How would you rate it",
+"Give me a TV show that you like",
+"How would you rate it",
+"Give me a TV show that you like",
+"How would you rate it",
+"Give me a TV show that you like",
+"How would you rate it"
 ]
 
 var recommandationTvShows=["name1","name2","name3","name4","name5"]
 var recommandationTvShowsUrl = ["https://unsplash.it/200","https://unsplash.it/200","https://unsplash.it/200"]
 var questionNumber = 0;
-var finishQuestionnaire = false;
+// var finishQuestionnaire = false;
 io.on('connection', function (socket) {
   var addedUser = false;
   var userProfile = {};
@@ -40,17 +57,17 @@ io.on('connection', function (socket) {
     userProfile[socket.username].push(data);
     console.log("data is ",userProfile[socket.username]);
 
-    if (socket.question===undefined){
-      // socket.emit("recommandation",recommandationTvShowsUrl);
-      var userProfileLength = userProfile[socket.username].length
-      socket.emit("finish Questionnaire",{
-        username:socket.username,
-        message: "finish Questionnaire",
-        lastAnswer:userProfile[socket.username][userProfileLength-1]
-      });
-      finishQuestionnaire= true;
-      return;
-    }
+    // if (questionNumber>4){
+    //   // socket.emit("recommandation",recommandationTvShowsUrl);
+    //   var userProfileLength = userProfile[socket.username].length
+    //   socket.emit("finish Questionnaire",{
+    //     username:socket.username,
+    //     message: "finish Questionnaire",
+    //     lastAnswer:userProfile[socket.username][userProfileLength-1]
+    //   });
+    //   // finishQuestionnaire= true;
+    //   // return;
+    // }
 
 
     //  send the next quesion 
