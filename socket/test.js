@@ -1,24 +1,6 @@
 var express = require('express')
 var app = express()
 var bodyParser = require('body-parser')
-// var server = http.createServer(function (request, response) {
-//   response.writeHead(200, {"Content-Type": "text/plain"});
-//   response.end("Hello Worldasdfasdfa\n");
-// });
-
-/* Creating server */
-// var server = http.createServer(function (request, response) {
-//     if (request.url == '/' || request.url == '/index.html') {
-//         var fileStream = fs.createReadStream('./index.html');
-
-//         fileStream.pipe(response);
-//     } else {
-//     	// Website you wish to allow to connect
-// 		// response.setHeader('Access-Control-Allow-Origin', '*');
-//         response.writeHead(200, {"Content-Type": "text/plain"});
-//         response.end("Hello World\n");
-//     }
-// });
 
 app.use(bodyParser.json())
 

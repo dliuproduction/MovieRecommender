@@ -21,9 +21,11 @@ var numUsers = 0;
 var sampleQuestion =["what you like?",
 "what type of TV shows you like",
 "what is your faviourite TV shows language",
+"what is your faviourite TV shows"
 ]
 
 var recommandationTvShows=["name1","name2","name3","name4","name5"]
+var recommandationTvShowsUrl = ["https://unsplash.it/200","https://unsplash.it/200","https://unsplash.it/200"]
 var questionNumber = 0;
 var finishQuestionnaire = false;
 io.on('connection', function (socket) {
@@ -35,22 +37,22 @@ io.on('connection', function (socket) {
     ++questionNumber;
 
     socket.question = sampleQuestion[questionNumber];
-
-    if (socket.question===undefined){
-      socket.emit("recommandation",recommandationTvShows);
-      socket.emit("finish Questionnaire",{
-        username:socket.username,
-        message: "finish Questionnaire"
-      });
-      finishQuestionnaire= true;
-    }
-
-    // socket.broadcast.emit('new message', {
-    //   username: socket.username,
-    //   message: data
-    // });
     userProfile[socket.username].push(data);
     console.log("data is ",userProfile[socket.username]);
+
+    if (socket.question===undefined){
+      // socket.emit("recommandation",recommandationTvShowsUrl);
+      var userProfileLength = userProfile[socket.username].length
+      socket.emit("finish Questionnaire",{
+        username:socket.username,
+        message: "finish Questionnaire",
+        lastAnswer:userProfile[socket.username][userProfileLength-1]
+      });
+      finishQuestionnaire= true;
+      return;
+    }
+
+
     //  send the next quesion 
     socket.emit("question",{
       username:socket.username,
@@ -85,19 +87,7 @@ io.on('connection', function (socket) {
     });
   });
 
-  // when the client emits 'typing', we broadcast it to others
-  // socket.on('typing', function () {
-  //   socket.broadcast.emit('typing', {
-  //     username: socket.username
-  //   });
-  // });
 
-  // // when the client emits 'stop typing', we broadcast it to others
-  // socket.on('stop typing', function () {
-  //   socket.broadcast.emit('stop typing', {
-  //     username: socket.username
-  //   });
-  // });
   socket.on("ack",function(fn){
     fn("this is the call back function");
   })

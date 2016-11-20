@@ -16,6 +16,8 @@ $(function() {
   var $loginPage = $('.login.page'); // The login page
   var $chatPage = $('.chat.page'); // The chatroom page
 
+
+
   // Prompt for setting a username
   var username;
   var connected = false;
@@ -23,17 +25,13 @@ $(function() {
   var lastTypingTime;
   var $currentInput = $usernameInput.focus();
 
+  // varible used for the app
+  var lastQuestion;
+  var serverUrl = "https://codejam.localtunnel.me/name"
   var finishQuestionnaire = false;
   var socket = io();
 
   function addParticipantsMessage (data) {
-    // var message = '';
-    // if (data.numUsers === 1) {
-    //   message += "there's 1 participant";
-    // } else {
-    //   message += "there are " + data.numUsers + " participants";
-    // }
-    // log(message);
     console.log("addParticipantsMessage");
   }
 
@@ -74,6 +72,21 @@ $(function() {
     console.log("sendMessage")
   }
 
+  function callAjax(lastAnswer,cb){
+     console.log("sending",lastAnswer);
+     $.ajax({
+          type: "POST",
+          url: serverUrl,
+          data: lastAnswer,
+          success: function (data) {
+            console.log(data);
+            cb(data);
+          },
+          error:function(){
+            alert("Error");
+          },
+      });
+  }
   // Log a message
   function log (message, options) {
     var $el = $('<li>').addClass('log').text(message);
@@ -134,6 +147,29 @@ $(function() {
     addMessageElement($messageDiv, {});
     console.log("addRecommendation");
   }
+  function addRecommendationUrl(e){
+    // var typingClass = data.typing ? 'typing' : '';
+    var imageClass = "imageClass"
+
+    var $img = e;
+    var $imageDiv = $("<img />")
+      .attr("src",e)
+      .addClass(imageClass)
+      
+    var $messageBodyDiv = $('<span class="messageBody">')
+      // .text("something")
+      .append($imageDiv)
+    var $messageDiv = $('<li class="message"/>')
+      // .addClass(typingClass)
+      
+      .css("display","inline")
+      .append($messageBodyDiv);
+
+
+    addMessageElement($messageDiv, {});
+    console.log("addRecommendation");
+  }
+
   // Adds a message element to the messages and scrolls to the bottom
   // el - The element to add as a message
   // options.fade - If the element should fade-in (default = true)
@@ -172,34 +208,6 @@ $(function() {
     console.log("cleanInput");
   }
 
-  // Updates the typing event
-  // function updateTyping () {
-  //   if (connected) {
-  //     if (!typing) {
-  //       typing = true;
-  //       socket.emit('typing');
-  //     }
-  //     lastTypingTime = (new Date()).getTime();
-
-  //     setTimeout(function () {
-  //       var typingTimer = (new Date()).getTime();
-  //       var timeDiff = typingTimer - lastTypingTime;
-  //       if (timeDiff >= TYPING_TIMER_LENGTH && typing) {
-  //         socket.emit('stop typing');
-  //         typing = false;
-  //       }
-  //     }, TYPING_TIMER_LENGTH);
-  //   }
-  //   console.log("updateTyping")
-  // }
-
-  // Gets the 'X is typing' messages of a user
-  // function getTypingMessages (data) {
-  //   return $('.typing.message').filter(function (i) {
-  //     return $(this).data('username') === data.username;
-  //   });
-  //   console.log("getTypingMessages")
-  // }
 
   // Gets the color of a username through our hash function
   function getUsernameColor (username) {
@@ -267,8 +275,14 @@ $(function() {
 
   socket.on("finish Questionnaire",function(data){
     finishQuestionnaire = true;
-  
-    addChatMessage(data);
+    var lastAnswer = data.lastAnswer; 
+    console.log("finish ... Questionnaire");
+    // addChatMessage(lastAnswer);
+    console.log(lastAnswer);
+    callAjax(lastAnswer,function(data){
+      addChatMessage(data);
+    });
+    
   })
   // Whenever the server emits 'new message', update the chat body
   socket.on('new message', function (data) {
@@ -286,7 +300,8 @@ $(function() {
   socket.on("recommandation",function(data){
     data.map(function(e){
       console.log("element",e);
-      addRecommendation(e);
+      // addRecommendation(e);
+      addRecommendationUrl(e);
     });
   })
   // Whenever the server emits 'user joined', log it in the chat body
@@ -301,32 +316,5 @@ $(function() {
     addParticipantsMessage(data);
     // removeChatTyping(data);
   });
-
-  // Whenever the server emits 'typing', show the typing message
-  // socket.on('typing', function (data) {
-  //   addChatTyping(data);
-  // });
-
-  // Whenever the server emits 'stop typing', kill the typing message
-  // socket.on('stop typing', function (data) {
-  //   removeChatTyping(data);
-  // });
-
-  // socket.on('disconnect', function () {
-  //   log('you have been disconnected');
-  // });
-
-  
-
-  // socket.on('reconnect', function () {
-  //   log('you have been reconnected');
-  //   if (username) {
-  //     socket.emit('add user', username);
-  //   }
-  // });
-
-  // socket.on('reconnect_error', function () {
-  //   log('attempt to reconnect has failed');
-  // });
 
 });

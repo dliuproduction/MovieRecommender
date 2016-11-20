@@ -1,4 +1,4 @@
-
+node_backend/node_modules
 socket.io/
 .DS_Store
 socket/node_modules
