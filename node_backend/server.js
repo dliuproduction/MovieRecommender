@@ -63,19 +63,19 @@ app.post('/dataQuery', function(req, res) {
                         if (ids[i] == result.rows[j].id) {
                             table[i] =
                             {
-                                origin_country: result.rows[j].origin_country,
-                                poster_path: result.rows[j].poster_path,
-                                name: result.rows[j].name,
-                                overview: result.rows[j].overview,
-                                popularity: result.rows[j].popularity,
-                                original_name: result.rows[j].original_name,
-                                backdrop_path: result.rows[j].backdrop_path,
-                                first_air_date: result.rows[j].first_air_date,
-                                vote_count: result.rows[j].vote_count,
-                                vote_average: result.rows[j].vote_average,
-                                original_language: result.rows[j].original_language,
-                                id: result.rows[j].id,
-                                genre_ids: result.rows[j].genre_ids
+                                "origin_country": result.rows[j].origin_country,
+                                "poster_path": result.rows[j].poster_path,
+                                "name": result.rows[j].name,
+                                "overview": result.rows[j].overview,
+                                "popularity": result.rows[j].popularity,
+                                "original_name": result.rows[j].original_name,
+                                "backdrop_path": result.rows[j].backdrop_path,
+                                "first_air_date": result.rows[j].first_air_date,
+                                "vote_count": result.rows[j].vote_count,
+                                "vote_average": result.rows[j].vote_average,
+                                "original_language": result.rows[j].original_language,
+                                "id": result.rows[j].id,
+                                "genre_ids": result.rows[j].genre_ids
                             }
                             break;
                         }
@@ -89,10 +89,11 @@ app.post('/dataQuery', function(req, res) {
     res.send(JSON.stringify(table));
 });
 
-var server = app.listen(3001, function() {
-    var port = server.address().port;
-    console.log("Server listening at http://localhost:%s", port)
+var server = app.listen(8888, function(){
+
+    console.log("listening on port " + server.address().port);
 });
+
 
 
 //attempt to copy entire table db from psql to STDOUT and pipe to a file through fileStream

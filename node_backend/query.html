@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body>
+    <!--<script src="koo.js"></script>-->
+
+    <button id = "mybutton"> click here </button>
+    <script>
+        $("#mybutton").click(function(){
+            // this will be run when the AJAX request succeeds
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:8888/dataQuery",
+                contentType:'application/json',
+                data: JSON.stringify(["tt13055826", "tt0898266"]),
+                success: function(data){console.log("got it", data);}//this is going to be string array sent to DB
+            })
+        })</script>
+</body>
+</html>
