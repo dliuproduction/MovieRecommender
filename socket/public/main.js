@@ -20,7 +20,7 @@ $(function() {
   var prefixUrl = "https://image.tmdb.org/t/p/w600_and_h900_bestv2"
 
   var recommandationTvShowsUrl = [{"title":"this is the title","url":"https://unsplash.it/200","overview":"boring"},{"title":"2 title","url":"https://unsplash.it/200","overview":"boring"}]
-
+  var resultArray;
   // Prompt for setting a username
   var username;
   var connected = false;
@@ -121,6 +121,7 @@ $(function() {
           success: function (data) {
             console.log("second ajax back",data);
             // setName(data);
+            
             cb(data);
           },
           error:function(){
@@ -280,6 +281,10 @@ $(function() {
 
   // Keyboard events
 
+  function magic(data){
+    console.log("magic",data);
+    return data;
+  }
   $window.keydown(function (event) {
     // Auto-focus the current input when a key is typed
     if (!(event.ctrlKey || event.metaKey || event.altKey)) {
@@ -307,18 +312,55 @@ $(function() {
           var rate = $inputMessage.val();
           movieRateDict[lastName] = rate;
           console.log("second answser is ",movieRateDict);
+          
           callSecondAjax(movieRateDict,function(data){
-            addChatMessage(data);
+            // addChatMessage(data);
+            // recommandationTvShowsUrl
+              resultArray = magic(data);
+              console.log("most important array",resultArray);
           });
+          // #2
+          // var p1 = new Promise(function(function(){
+          // },reject){
+          //    callSecondAjax(movieRateDict,function(data){
+          //   // addChatMessage(data);
+          //   // recommandationTvShowsUrl
+          //     resultArray = magic(data);
+          //     console.log("most important array",resultArray);
+          //   });
+          // });
+          // p1.done(function(){
+          //   console.log("order")
+          //   console.log("result is ",resultArray);
+          //   evenOdd = true;
+          //   sendMessage();
+          //   addRecommandationHeader();
+          //   // setInterval(function(){ console.log("wait") }, 3000);
+          //   // var resultArray = Magic();
+          //   // recommandationTvShowsUrl
+          //   recommandationTvShowsUrl.map(function(el){
+          //     addRecommendationUrl(el);
+          //   })
           
+          // });
+          // #1
           
-          evenOdd = true;
-          sendMessage();
-          addRecommandationHeader();
-          // setInterval(function(){ console.log("wait") }, 3000);
-          recommandationTvShowsUrl.map(function(el){
-            addRecommendationUrl(el);
-          })
+          window.setTimeout(
+                function() {
+                  console.log("order")
+                  console.log("result is ",resultArray);
+                  evenOdd = true;
+                  sendMessage();
+                  addRecommandationHeader();
+            // setInterval(function(){ console.log("wait") }, 3000);
+            // var resultArray = Magic();
+            // recommandationTvShowsUrl
+                  recommandationTvShowsUrl.map(function(el){
+                    addRecommendationUrl(el);
+                  })
+                    // We fulfill the promise !
+                },  2500);
+          
           
           // socket.emit('stop typing');
           typing = false;
