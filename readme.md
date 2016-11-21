@@ -2,10 +2,7 @@ Dataset
 ======
 * movie sample database
 
-Todo Feature
-======
-* heroku deployment
-* backend engine
-* front end UI to get the user preference
-* algorithm to suggest movie based on userProfile data
-* add NLP for the user
+Demo
+====
+* Visit [demo](http://159.203.30.223:3000)
+

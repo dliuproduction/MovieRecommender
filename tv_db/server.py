@@ -85,7 +85,9 @@ def assign_weight(id_, weight, ret):
         ret[id_] = weight
 
 
-def do_this(ids, weight):
+def do_this(ids, weight, cache={}):
+    if ids[0] in cache:
+        return cache[ids[0]]
     weight = float(weight)
     ret = {}
     next_level = ids
@@ -99,6 +101,7 @@ def do_this(ids, weight):
             assign_weight(id_, weight, ret)
         weight = weight / 2
         next_level = list(next_level_)
+    cache[ids[0]] = ret
     return ret
 
 
@@ -127,13 +130,20 @@ def get_top_10(l, remove_list):
     return ret
 
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['POST', 'OPTIONS'])
+@crossdomain(origin='*')
 def jam():
     if request.method == 'POST':
-        js = request.json
-        # if js:
-        #     return get_stuff_list(js)
-    return "HELLO WORLD"
+        form = request.form
+        l = []
+        for (id_, stars) in form.items():
+            l.append(do_this([id_], float(stars)))
+        ret = combine_scores(l)
+        rett = sort_stuff(ret)
+        rettt = get_top_10(rett, [id_ for (id_, stars) in form.items()])
+        retttt = jsonify({'data': rettt})
+        print retttt
+        return retttt
 
 
 @app.route('/name', methods=['POST', 'OPTIONS'])
@@ -141,8 +151,9 @@ def jam():
 def translate_name_to_id():
     if request.method == 'POST':
         form = request.form
+        print form
         name = form.items()[0][0]
-        name = name.lower()
+        name = name.lower().strip()
         ret = tv2id[name]
         ret = jsonify({'id': ret})
         print ret
@@ -150,7 +161,7 @@ def translate_name_to_id():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', debug=False)
     # ret1 = do_this([u'tt0795176'], 5.0)
     # ret2 = do_this([u'tt0903747'], 3.0)
     # ret = combine_scores([ret1, ret2])
