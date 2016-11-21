@@ -78,7 +78,17 @@ app.post('/dataQuery', function(req, res) {
                 'name, ' +
                 'overview, ' +
                 'first_air_date, ' +
-                'imdbid FROM public.tv WHERE imdbid IN [ids[0],ids[1]];',[], function (err, result) {
+                'imdbid FROM public.tv WHERE imdbid IN ('+
+				'\'' + ids[0] + '\', '
+				'\'' + ids[1] + '\', '
+				'\'' + ids[2] + '\', '
+				'\'' + ids[3] + '\', '
+				'\'' + ids[4] + '\', '
+				'\'' + ids[5] + '\', '
+				'\'' + ids[6] + '\', '
+				'\'' + ids[7] + '\', '
+				'\'' + ids[8] + '\', '
+				'\'' + ids[9] + '\'' + ');',[], function (err, result) {
                 // for (var i = 0; i <= ids.length-1; i++) {
                 //     while (true) {
                 //         for (var j = 0; j <= result.rows.length-1; j++) {
