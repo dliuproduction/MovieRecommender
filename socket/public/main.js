@@ -280,11 +280,23 @@ $(function() {
   }
 
   // Keyboard events
-
-  function magic(data){
-    console.log("magic",data);
-    return data;
-  }
+  function magic (data){
+            // this will be run when the AJAX request succeeds
+            $.ajax({
+                type: "POST",
+                url: "http://159.203.30.223:8888/dataQuery",
+                contentType:'application/json',
+                data: JSON.stringify(data[data]),
+                success: function(data){
+                  console.log("this is the back data",data)
+                  resultArray = data
+                console.log("this is the third sever",resultArray);}//this is going to be string array sent to DB
+            })
+          }
+  // function magic(data){
+  //   console.log("magic",data);
+  //   return data;
+  // }
   $window.keydown(function (event) {
     // Auto-focus the current input when a key is typed
     if (!(event.ctrlKey || event.metaKey || event.altKey)) {
@@ -316,8 +328,8 @@ $(function() {
           callSecondAjax(movieRateDict,function(data){
             // addChatMessage(data);
             // recommandationTvShowsUrl
-              resultArray = magic(data);
-              console.log("most important array",resultArray);
+              magic(data);
+              // console.log("most important array",resultArray);
           });
           // #2
           // var p1 = new Promise(function(function(){
