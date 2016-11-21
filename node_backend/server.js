@@ -47,46 +47,67 @@ app.use(function(req,res,next){
     res.set('Access-Control-Allow-Credentials', true);
     next()
 })
+//
+// pool.connect(function(err, client, release) {
+//     client.query('SELECT name, imdbid FROM public.tv WHERE imdbid=\'tt0436992\';',[], function (err, result) {
+//         console.log(result.rows[0].name);
+//         console.log(result.rows[0].imdbid);
+//     });
+// });
+
 
 app.post('/dataQuery', function(req, res) {
-    console.log("Got a POST request from client");
-    var ids = JSON.parse(req.body);
 
-    var table = {}; // table to return
+    function cb(){
+        res.send(JSON.stringify(table));
+    }
+    console.log("Got a POST request from client");
+    // console.log("The content received is:\n" + req.body);
+    // console.log(typeof(req.body));
+
+    var ids = req.body;
+
+    for (var i = 0; i <= ids.length-1; i++ ){
+        ids[i] = "'" + ids[i] + "'";
+    }
+
+    var table = []; // table to return
 
         pool.connect(function(err, client, release) {
-            client.query('SELECT name, overview, genre_ids FROM public.tv', function (err, result) {
-                for (var i = 0; i <= 9; i++) {
-                    var j = 0;
-                    while (true) {
-                        // console.log("\n" + result.rows[i].name);
-                        if (ids[i] == result.rows[j].id) {
-                            table[i] =
-                            {
-                                "origin_country": result.rows[j].origin_country,
-                                "poster_path": result.rows[j].poster_path,
-                                "name": result.rows[j].name,
-                                "overview": result.rows[j].overview,
-                                "popularity": result.rows[j].popularity,
-                                "original_name": result.rows[j].original_name,
-                                "backdrop_path": result.rows[j].backdrop_path,
-                                "first_air_date": result.rows[j].first_air_date,
-                                "vote_count": result.rows[j].vote_count,
-                                "vote_average": result.rows[j].vote_average,
-                                "original_language": result.rows[j].original_language,
-                                "id": result.rows[j].id,
-                                "genre_ids": result.rows[j].genre_ids
-                            }
-                            break;
-                        }
-                        j++;
-                    }
-                }
+            client.query('SELECT poster_path, ' +
+                'name, ' +
+                'overview, ' +
+                'first_air_date, ' +
+                'imdbid FROM public.tv WHERE imdbid IN [ids[0],ids[1]];',[], function (err, result) {
+                // for (var i = 0; i <= ids.length-1; i++) {
+                //     while (true) {
+                //         for (var j = 0; j <= result.rows.length-1; j++) {
+                //             // console.log("\n" + result.rows[i].name);
+                //             console.log(ids[i]);
+                //             console.log(result.rows[j].imdbid);
+                //             if (ids[i].localeCompare(result.rows[j].imdbid)==0) {
+                //                 console.log("show found");
+                table.push
+                ({
+                    "poster_path": result.rows[0].poster_path,
+                    "name": result.rows[0].name,
+                    "overview": result.rows[0].overview,
+                    "first_air_date": result.rows[0].first_air_date,
+                    "imdbid": result.rows[0].imdbid
+                });
+                console.log(table);
+
+                cb();
+
+                //                         break;
+                //                     }
+                //                 }
+                //             }
+                //         }
+                //     });
+                // });
             });
         });
-
-    console.log("The content received is:\n" + req.body);
-    res.send(JSON.stringify(table));
 });
 
 var server = app.listen(8888, function(){
