@@ -74,21 +74,28 @@ app.post('/dataQuery', function(req, res) {
     var table = []; // table to return
 
         pool.connect(function(err, client, release) {
+
+            // console.log('SELECT poster_path, ' +
+            //     'name, ' +
+            //     'overview, ' +
+            //     'first_air_date, ' +
+            //     'imdbid FROM public.tv WHERE imdbid IN (' +
+            //     ids[0] + ', ' +
+            //     ids[1] + ', ' +
+            //     ids[2] + ', ' +
+            //     ids[3] + ', ' +
+            //     ids[4] + ');');
+
             client.query('SELECT poster_path, ' +
                 'name, ' +
                 'overview, ' +
                 'first_air_date, ' +
                 'imdbid FROM public.tv WHERE imdbid IN ('+
-				'\'' + ids[0] + '\', '
-				'\'' + ids[1] + '\', '
-				'\'' + ids[2] + '\', '
-				'\'' + ids[3] + '\', '
-				'\'' + ids[4] + '\', '
-				'\'' + ids[5] + '\', '
-				'\'' + ids[6] + '\', '
-				'\'' + ids[7] + '\', '
-				'\'' + ids[8] + '\', '
-				'\'' + ids[9] + '\'' + ');',[], function (err, result) {
+				 ids[0] + ', ' +
+				 ids[1] + ', ' +
+                    ids[2] + ', ' +
+                    ids[3] + ', ' +
+                    ids[4] + ');',[], function (err, result) {
                 // for (var i = 0; i <= ids.length-1; i++) {
                 //     while (true) {
                 //         for (var j = 0; j <= result.rows.length-1; j++) {
@@ -97,14 +104,16 @@ app.post('/dataQuery', function(req, res) {
                 //             console.log(result.rows[j].imdbid);
                 //             if (ids[i].localeCompare(result.rows[j].imdbid)==0) {
                 //                 console.log("show found");
-                table.push
-                ({
-                    "poster_path": result.rows[0].poster_path,
-                    "name": result.rows[0].name,
-                    "overview": result.rows[0].overview,
-                    "first_air_date": result.rows[0].first_air_date,
-                    "imdbid": result.rows[0].imdbid
-                });
+                for (var j = 0; j <= ids.length-1; j++ ) {
+                    table.push
+                    ({
+                        "poster_path": result.rows[j].poster_path,
+                        "name": result.rows[j].name,
+                        "overview": result.rows[j].overview,
+                        "first_air_date": result.rows[j].first_air_date,
+                        "imdbid": result.rows[j].imdbid
+                    });
+                }
                 console.log(table);
 
                 cb();
