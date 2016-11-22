@@ -32,7 +32,7 @@ app.post('/F1', function (req, res) {
 
 //////////////////////////HTML AJAXvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 
-var dbInfo(data1){
+var dbInfo = function(data1){
 $.ajax({
 						type: "POST",
             url: "",
@@ -50,6 +50,20 @@ $.ajax({
 		console.log(movieInfo);	
 	});
 };
+
+var dbTest = function(){
+    // this will be run when the AJAX request succeeds
+    $.ajax({
+        type: "POST",
+        url: "https://localhost:3001/dataQuery",
+        contentType:'application/json',
+        data: JSON.stringify([tt13055826, tt0898266])
+        success: function(data) {
+            console.log(data);
+        }//this is going to be string array sent to DB
+    })
+}
+
 
 
 
